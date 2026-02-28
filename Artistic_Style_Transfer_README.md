@@ -1,4 +1,4 @@
-# Artistic Style Transfer using PyTorch
+# Artistic Style Transfer using Tensorflow
 
 ## Project Overview
 
