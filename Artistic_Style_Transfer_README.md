@@ -70,7 +70,7 @@ Therefore, only convolutional layers are used.
 
 Content is extracted from a deeper convolutional layer such as:
 
-conv4_2
+block5_conv2 
 
 ## Why Deeper Layers for Content?
 
