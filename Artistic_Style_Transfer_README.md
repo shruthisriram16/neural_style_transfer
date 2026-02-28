@@ -197,9 +197,9 @@ MaxPooling layers:
 
 # Output
 <p align="center">
-  <img src="content_images/architecture/architecture_pic2.jpg" width="300">
-  <img src="style_images/starry_night.jpg" width="300">
-  <img src="outputs/stylized_output.jpg" width="300">
+  <img src="content_images/architecture/architecture_pic2.jpg" width="300", height="350">
+  <img src="style_images/van_gogh/van_pic1.jpg" width="300" , height="350">
+  <img src="outputs/stylized_output.jpg" width="300" , height="350">
 </p>
 ------------------------------------------------------------------------
 
