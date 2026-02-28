@@ -2,122 +2,167 @@
 
 ## Project Overview
 
-This project implements Neural Style Transfer, a deep learning technique
-that combines the content of one image with the artistic style of
-another image through transfer learning. The goal is to generate a new image that preserves the
-structure and objects from the content image while adopting textures,
-colors, and brush patterns from the style image.
+This project implements **Neural Style Transfer**, a deep learning
+technique that combines the content of one image with the artistic style
+of another image using an optimization-based approach.
 
-The implementation is based on an optimization approach using a
-pretrained convolutional neural network.
+The objective is to generate a new image that:
+
+-   Preserves the structural content of the original image
+-   Adopts textures, colors, and artistic patterns from the style image
+
+The implementation uses a pretrained **VGG19** convolutional neural
+network as a fixed feature extractor.
 
 ------------------------------------------------------------------------
 
-## Core Idea
+# Core Idea
 
 Neural Style Transfer works by defining two types of losses:
 
-Content Loss\
-Style Loss
+-   **Content Loss**
+-   **Style Loss**
 
-The generated image is initialized randomly (or as a copy of the content
-image) and updated iteratively to minimize the total loss.
+The generated image is initialized either randomly or as a copy of the
+content image and is iteratively updated to minimize the total loss.
 
 Total Loss = Content Loss + Style Loss
 
 ------------------------------------------------------------------------
 
-## Model Architecture
+# Model Architecture and Layer Selection
 
-A pretrained VGG19 convolutional neural network is used as a fixed
-feature extractor.
+A pretrained **VGG19** network is used as a fixed feature extractor.
 
-The network is not trained from scratch. Instead, its intermediate
-convolutional layers are used to extract feature representations of
-images.
+-   Fully connected layers are removed (since this is not a
+    classification task)
+-   Only convolutional layers are used
+-   The network weights are frozen
+-   The generated image pixels are optimized instead
 
-Certain layers are selected for:
+VGG19 consists of sequential convolutional blocks:
 
-Content representation\
-Style representation
+-   Convolution layers
+-   ReLU activations
+-   MaxPooling layers
 
-The generated image is optimized using gradient descent while keeping
-the VGG19 weights frozen.
-
-------------------------------------------------------------------------
-
-## Content Representation
-
-Content is captured from higher convolutional layers of VGG19.
-
-These deeper layers encode high-level structural information such as:
-
-Object shapes\
-Spatial layout\
-Major edges
-
-Content loss is calculated as the mean squared error between:
-
-Feature maps of the content image\
-Feature maps of the generated image
-
-This ensures the generated image maintains the structure of the original
-content image.
+As we move deeper into the network, feature representations become more
+abstract.
 
 ------------------------------------------------------------------------
 
-## Style Representation
+## Why Only Convolutional Layers?
 
-Style is captured using multiple convolutional layers from different
-depths of the network.
+Fully connected layers capture class-specific information for
+classification tasks.
 
-Instead of directly comparing feature maps, style is represented using a
-Gram Matrix.
+In style transfer, we are interested in:
 
-### What is a Gram Matrix
+-   Spatial feature maps
+-   Texture representations
+-   Structural patterns
 
-The Gram Matrix measures correlations between different feature maps in
-a convolutional layer.
-
-If a layer produces N feature maps, the Gram Matrix is an N x N matrix
-where:
-
-Each value represents how strongly two feature maps are correlated
-across spatial locations.
-
-If F is a feature map matrix reshaped to size (number_of_filters x
-spatial_pixels),
-
-Gram Matrix G = F multiplied by F transpose
-
-This captures:
-
-Texture patterns\
-Color distributions\
-Repetitive structures
-
-Because correlations represent texture information rather than spatial
-arrangement, Gram matrices effectively encode artistic style.
+Therefore, only convolutional layers are used.
 
 ------------------------------------------------------------------------
 
-## Style Loss
+# Content Representation
 
-Style loss is computed as the mean squared error between:
+Content is extracted from a deeper convolutional layer such as:
 
-Gram matrices of the style image\
-Gram matrices of the generated image
+conv4_2
 
-This is calculated across multiple layers to capture both:
+## Why Deeper Layers for Content?
 
-Low-level textures (edges, colors)\
-High-level patterns (complex brush strokes)
+Earlier layers capture: - Edges - Simple patterns - Local textures
+
+Deeper layers capture: - Object structure - Spatial layout - High-level
+semantic information
+
+Using block5_conv2 ensures that:
+
+-   Fine textures are ignored
+-   Overall structure is preserved
+
+Content loss is computed as the Mean Squared Error (MSE) between:
+
+-   Feature maps of the content image
+-   Feature maps of the generated image
 
 ------------------------------------------------------------------------
 
-## Optimization Process
+# Style Representation
 
-Steps followed in the project:
+Style is extracted from multiple layers:
+
+    'block1_conv1',
+    'block2_conv1',
+    'block3_conv1',
+    'block4_conv1',
+    'block5_conv1'
+
+## Why Multiple Layers?
+
+Style exists at multiple scales:
+
+-   Early layers → colors and edges
+-   Middle layers → textures
+-   Deeper layers → complex artistic patterns
+
+Using multiple layers ensures:
+
+-   Both fine and coarse textures are captured
+-   Global artistic patterns are preserved
+
+------------------------------------------------------------------------
+
+# What is a Gram Matrix?
+
+Style is represented using a **Gram Matrix**.
+
+If a convolutional layer produces N feature maps, the Gram Matrix is an
+N × N matrix where:
+
+-   Each element represents the correlation between two feature maps
+
+If F is reshaped to:
+
+(number_of_filters × spatial_pixels)
+
+Then:
+
+G = F × Fᵀ
+
+The Gram Matrix captures:
+
+-   Texture patterns
+-   Color distributions
+-   Repetitive structures
+
+------------------------------------------------------------------------
+
+# Style Loss
+
+Style loss is computed as the Mean Squared Error between:
+
+-   Gram matrices of the style image
+-   Gram matrices of the generated image
+
+This is calculated across multiple selected layers.
+
+------------------------------------------------------------------------
+
+# Role of MaxPooling Layers
+
+MaxPooling layers:
+
+-   Reduce spatial dimensions
+-   Increase receptive field size
+-   Allow deeper layers to capture global structure
+
+------------------------------------------------------------------------
+
+# Optimization Process
 
 1.  Load content and style images\
 2.  Resize and normalize images\
@@ -128,33 +173,44 @@ Steps followed in the project:
 7.  Combine losses\
 8.  Optimize the generated image using gradient descent
 
-The process continues until the total loss converges.
+------------------------------------------------------------------------
+
+# Tech Stack
+
+-   Python\
+-   PyTorch\
+-   Torchvision\
+-   PIL\
+-   Matplotlib
 
 ------------------------------------------------------------------------
 
-## Tech Stack
+# Key Learnings
 
-Python\
-PyTorch\
-Torchvision\
-PIL\
-Matplotlib
-
-------------------------------------------------------------------------
-
-## Key Learnings
-
-Understanding feature representations in convolutional neural networks\
-Difference between spatial structure and texture representation\
-Role of Gram Matrix in capturing style\
-Balancing content and style weights\
-Optimization-based image generation
+-   Understanding hierarchical feature representations in CNNs\
+-   Difference between spatial structure and texture representation\
+-   Role of Gram Matrix in capturing style\
+-   Balancing content and style weights\
+-   Optimization-based image generation
 
 ------------------------------------------------------------------------
 
-## Possible Improvements
+# Output
 
-Implement Fast Style Transfer using feedforward networks\
-Experiment with different style weights\
-Use different pretrained backbones\
-Add a web interface using Flask or FastAPI
+## Content Image
+![Content](content_images/architecture/architecture_pic2.jpg)
+
+## Style Image
+![Style](style_images/van_gogh/van_pic1.jpg)
+
+## Generated Output
+![Stylized Output](outputs/stylized_output.jpg)
+
+------------------------------------------------------------------------
+
+# Possible Improvements
+
+-   Implement Fast Style Transfer using feedforward networks\
+-   Experiment with different style weights\
+-   Use alternative pretrained backbones\
+-   Deploy as a web application using FastAPI or Streamlit
