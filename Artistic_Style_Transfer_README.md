@@ -196,16 +196,11 @@ MaxPooling layers:
 ------------------------------------------------------------------------
 
 # Output
-
-## Content Image
-![Content](content_images/architecture/architecture_pic2.jpg)
-
-## Style Image
-![Style](style_images/van_gogh/van_pic1.jpg)
-
-## Generated Output
-![Stylized Output](outputs/stylized_output.jpg)
-
+<p align="center">
+  <img src="content_images/portrait.jpg" width="300">
+  <img src="style_images/starry_night.jpg" width="300">
+  <img src="outputs/stylized_output.jpg" width="300">
+</p>
 ------------------------------------------------------------------------
 
 # Possible Improvements
