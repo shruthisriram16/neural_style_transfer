@@ -203,7 +203,7 @@ MaxPooling layers:
   &nbsp;&nbsp;
   <img src="outputs/stylized_output.jpg" width="300" , height="350">
 </p>
-----------------------------------------------------------------------------------
+---
 
 # Possible Improvements
 
